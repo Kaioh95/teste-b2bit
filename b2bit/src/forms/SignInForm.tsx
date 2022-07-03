@@ -1,7 +1,9 @@
 import { FormEvent, useState } from "react";
-import { useFormik, Formik, Form, Field} from "formik";
+import { useFormik } from "formik";
 import styled from "styled-components";
 import { SignSchema } from "../schemas/SignSchema";
+import useFlashMessage from "../hooks/useFlashMessage"
+import api from '../utils/api';
 
 const FormContainer = styled.div`
     background-color: #fff;
@@ -45,6 +47,12 @@ const SignButton = styled.button`
     font-weight: bold;
     margin: 10px 0px;
     cursor: pointer;
+    &:hover {
+        background-color: #02336f;
+    }
+    &:disabled {
+        opacity: 0.35;
+    }
 `;
 
 const FormError = styled.div`
@@ -56,10 +64,32 @@ const FormError = styled.div`
 `;
 
 const onSubmit = async (values: any, actions:any) => {
-    console.log(values);
-    console.log(actions);
-    console.log("submmited");
-    await new Promise(resolve=>setTimeout(resolve, 2000));
+    let msgType = 'success'
+    //const { setFlashMessage } = useFlashMessage()
+
+    const formData = {
+        'email': values.email,
+        'password': values.password,
+    }
+    console.log(formData)
+
+    /*const data = await api
+        .post('/account/profile/', JSON.stringify(formData), {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((response) => {
+            console.log(response.data)
+            return response.data
+        })
+        .catch((err)=> {
+            console.log(err)
+            msgType = 'error'
+            return err.response.data
+        });*/
+    
+    //setFlashMessage(data.message, msgType)
     actions.resetForm()
 }
 
@@ -78,7 +108,7 @@ export default function SignInForm(){
 
     return(
         <FormContainer>
-            <SignForm autoComplete="off">
+            <SignForm autoComplete="off" onSubmit={formik.handleSubmit}>
                 <SignLabel htmlFor="email">E-mail</SignLabel>
                 <SignInput id="email" type="text" name="email" placeholder="@email.com" 
                     value={formik.values.email}

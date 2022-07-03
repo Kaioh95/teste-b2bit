@@ -1,24 +1,55 @@
+import { BrowserRouter as Router, Routes, Route, useRoutes } from 'react-router-dom';
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import logob2b from './logob2b.png';
-import Card from './layout/Card';
-import SignInForm from './forms/SignInForm';
+import Home from './pages/Home';
+import LoginPage from './pages/LoginPage';
+
+const Pages = () => {
+  let routes = useRoutes([
+    { path: "/", element: <Home /> },
+    { path: "/login", element: <LoginPage /> },
+    // ...
+  ]);
+  return routes;
+};
 
 function App() {
   return (
     <div className="mainContent">
-      <Card src={logob2b}>
-        <SignInForm/>
-      </Card>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage/>}/>
+
+          <Route path="/" element={<Home/>}/>
+        </Routes>
+      </Router>
     </div>
   );
 }
 
 export default App;
 
-/*<div className="App">
+/*
+
+<div className="mainContent">
+  <Card src={logob2b}>
+    <SignInForm/>
+  </Card>
+</div>
+
+<Router>
+    <div className='mainContent'>
+      <Routes>
+        <Route path="/login" element={<LoginPage/>}/>
+
+        <Route path="/" element={<Home/>}/>
+      </Routes>
+    </div>
+</Router>
+
+<div className="App">
   <header className="App-header">
     <img src={logo} className="App-logo" alt="logo" />
     <p>
