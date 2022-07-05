@@ -2,8 +2,8 @@ import { FormEvent, useState } from "react";
 import { useFormik } from "formik";
 import styled from "styled-components";
 import { SignSchema } from "../schemas/SignSchema";
-import useFlashMessage from "../hooks/useFlashMessage"
-import api from '../utils/api';
+import { api } from '../utils/api';
+import { useNavigate } from "react-router-dom";
 
 const FormContainer = styled.div`
     background-color: #fff;
@@ -63,42 +63,45 @@ const FormError = styled.div`
     height: 13pt;
 `;
 
-const onSubmit = async (values: any, actions:any) => {
-    let msgType = 'success'
-    //const { setFlashMessage } = useFlashMessage()
-
-    const formData = {
-        'email': values.email,
-        'password': values.password,
-    }
-    console.log(formData)
-
-    /*const data = await api
-        .post('/account/profile/', JSON.stringify(formData), {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        .then((response) => {
-            console.log(response.data)
-            return response.data
-        })
-        .catch((err)=> {
-            console.log(err)
-            msgType = 'error'
-            return err.response.data
-        });*/
-    
-    //setFlashMessage(data.message, msgType)
-    actions.resetForm()
-}
 
 export default function SignInForm(){
+    const navigate = useNavigate()
+    const onSubmit = async (values: any, actions:any) => {
+        let msgType = 'success'
+    
+        const formData = {
+            'email': values.email,
+            'password': values.password,
+        }
+    
+        const data = await api
+            .post('/account/tokens/', JSON.stringify(formData), {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                localStorage.setItem('token', JSON.stringify(response.data.tokens.access))
+                navigate("/")
+                return response.data
+            })
+            .catch((err)=> {
+                console.log(err)
+                msgType = 'error'
+                actions.setFieldError("auth", "Authentication Failed!");
+                actions.setSubmitting(false)
+                return err.response.data
+            });
+        
+        actions.resetForm()
+    }
+
 
     const formik = useFormik({
         initialValues:{
             email: "",
-            password: ""
+            password: "",
+            auth: "",
         },
         validationSchema: SignSchema,
         onSubmit,
@@ -126,25 +129,10 @@ export default function SignInForm(){
                 {formik.errors.password && <FormError>{formik.errors.password}</FormError>}
 
                 <SignButton disabled={formik.isSubmitting} type="submit">Sign In</SignButton>
-                <FormError></FormError>
+                {formik.errors.auth && <FormError>{ formik.errors.auth }</FormError>}
             </SignForm>
         </FormContainer>
 
     )
 }
 
-
-/*
-<SignForm onSubmit={formik.handleSubmit}>
-    <SignLabel>E-mail</SignLabel>
-    <SignInput type="text" placeholder="@email.com" value={emailInput}/>
-    <FormError></FormError>
-
-    <SignLabel>Password</SignLabel>
-    <SignInput type="password" value={emailInput}/>
-    <FormError></FormError>
-
-    <SignButton type="submit">Sign In</SignButton>
-    <FormError></FormError>
-</SignForm>
-*/

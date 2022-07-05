@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface CardProps{
     src: string;
@@ -64,6 +64,12 @@ const LogoutButton = styled.button`
 `;
 
 export default function UserCard(props: CardProps){
+    const navigate = useNavigate()
+
+    function logout(){
+        localStorage.removeItem('token')
+        navigate("/login")
+    }
 
     return(
         <CardContainer>
@@ -73,7 +79,7 @@ export default function UserCard(props: CardProps){
             </SupImgDiv>
             <Content> {props.children} </Content>
 
-            <Link to="/login"><LogoutButton>Log out</LogoutButton></Link>
+            <LogoutButton onClick={logout}>Log out</LogoutButton>
         </CardContainer>
     );
 }

@@ -34,11 +34,6 @@ const UserInfo = styled.div`
 
 
 export default function UserProfile(props: UserProfileProps){
-    /*const navigate = useNavigate();
-
-    function logout(){
-        navigate("/login")
-    }*/
 
     return(
         <ProfileContainer>

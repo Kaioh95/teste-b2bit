@@ -1,10 +1,14 @@
 import axios, {HeadersDefaults} from "axios";
+import { ErrorInterceptor } from "./errorInterceptor";
+import { responseInterceptor } from "./responseInterceptor";
 
-interface CommonHeaderProperties extends HeadersDefaults {
-    Authorization: string;
-    ContentType: string;
-}
-
-export default axios.create({
+const api = axios.create({
     baseURL: "https://frontendproject.b2bit.company",
 });
+
+api.interceptors.response.use(
+    (response) => responseInterceptor(response),
+    (error) => ErrorInterceptor(error),
+);
+
+export { api };
